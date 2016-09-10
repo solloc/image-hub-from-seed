@@ -5,9 +5,9 @@ import * as util from 'gulp-util';
 import { join/*, sep, relative*/ } from 'path';
 
 import {
-  APP_CLIENT_DEST,
+  APP_DEST,
   SYSTEM_CONFIG_DEV,
-  APP_CLIENT_SRC,
+  APP_SRC,
   NG_FACTORY_FILE,
   /*PROJECT_ROOT, */TOOLS_DIR,
   TYPED_COMPILE_INTERVAL
@@ -31,10 +31,10 @@ export = () => {
     TOOLS_DIR + '/manual_typings/**/*.d.ts'
   ]);
   let src = [
-    join(APP_CLIENT_SRC, '**/*.ts'),
-    '!' + join(APP_CLIENT_SRC, '**/*.spec.ts'),
-    '!' + join(APP_CLIENT_SRC, '**/*.e2e-spec.ts'),
-    '!' + join(APP_CLIENT_SRC, `**/${NG_FACTORY_FILE}.ts`)
+    join(APP_SRC, '**/*.ts'),
+    '!' + join(APP_SRC, '**/*.spec.ts'),
+    '!' + join(APP_SRC, '**/*.e2e-spec.ts'),
+    '!' + join(APP_SRC, `**/${NG_FACTORY_FILE}.ts`)
   ];
 
   let projectFiles = gulp.src(src);
@@ -73,12 +73,12 @@ export = () => {
 //    .pipe(plugins.sourcemaps.write('.', {
 //      includeContent: false,
 //      sourceRoot: (file: any) =>
-//        relative(file.path, PROJECT_ROOT + '/' + APP_CLIENT_SRC).replace(sep, '/') + '/' + APP_CLIENT_SRC
+//        relative(file.path, PROJECT_ROOT + '/' + APP_SRC).replace(sep, '/') + '/' + APP_SRC
 //    }))
     .pipe(plugins.template(Object.assign(
       templateLocals(), {
         SYSTEM_CONFIG_DEV: jsonSystemConfig
       }
      )))
-    .pipe(gulp.dest(APP_CLIENT_DEST));
+    .pipe(gulp.dest(APP_DEST));
 };

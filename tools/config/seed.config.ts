@@ -125,13 +125,6 @@ export class SeedConfig {
   APP_CLIENT = argv['client'] || 'client';
 
   /**
-   * The directory where the server files are located.
-   * The default directory is `server`.
-   * @type {string}
-   */
-  APP_SERVER = argv['server'] || 'server';
-
-  /**
    * The bootstrap file to be used to boot the application. The file to be used is dependent if the hot-loader option is
    * used or not.
    * Per default (non hot-loader mode) the `main.ts` file will be used, with the hot-loader option enabled, the
@@ -153,10 +146,11 @@ export class SeedConfig {
   APP_TITLE = 'Welcome to angular2-seed!';
 
   /**
-   * The base folder of the client source files.
+   * The directory where the server files are located.
+   * The default directory is `server`.
    * @type {string}
    */
-  APP_CLIENT_SRC = `src/${this.APP_CLIENT}`;
+  APP_SERVER = argv['server'] || 'server';
 
   /**
    * The base folder of the server source files.
@@ -165,16 +159,22 @@ export class SeedConfig {
   APP_SERVER_SRC = `src/${this.APP_SERVER}`;
 
   /**
+   * The base folder of the applications source files.
+   * @type {string}
+   */
+  APP_SRC = `src/${this.APP_CLIENT}`;
+
+  /**
    * The folder of the applications asset files.
    * @type {string}
    */
-  ASSETS_SRC = `${this.APP_CLIENT_SRC}/assets`;
+  ASSETS_SRC = `${this.APP_SRC}/assets`;
 
   /**
    * The folder of the applications css files.
    * @type {string}
    */
-  CSS_SRC = `${this.APP_CLIENT_SRC}/css`;
+  CSS_SRC = `${this.APP_SRC}/css`;
 
   /**
    * The directory of the applications tools
@@ -200,16 +200,28 @@ export class SeedConfig {
   DIST_DIR = 'dist';
 
   /**
-   * The folder for built client files in the `dev` environment.
+   * The folder for built files in the `dev` environment.
    * @type {string}
    */
-  DEV_CLIENT_DEST = `${this.DIST_DIR}/dev/${this.APP_CLIENT}`;
+  DEV_DEST = `${this.DIST_DIR}/dev`;
 
   /**
-   * The folder for the built client files in the `prod` environment.
+   * The folder for the built files in the `prod` environment.
    * @type {string}
    */
-  PROD_CLIENT_DEST = `${this.DIST_DIR}/prod/${this.APP_CLIENT}`;
+  PROD_DEST = `${this.DIST_DIR}/prod`;
+
+  /**
+   * The folder for temporary files.
+   * @type {string}
+   */
+  TMP_DIR = `${this.DIST_DIR}/tmp`;
+
+  /**
+   * The folder for the built files, corresponding to the current environment.
+   * @type {string}
+   */
+  APP_DEST = this.ENV === ENVIRONMENTS.DEVELOPMENT ? this.DEV_DEST : this.PROD_DEST;
 
   /**
    * The folder for built server files in the `dev` environment.
@@ -224,24 +236,6 @@ export class SeedConfig {
   PROD_SERVER_DEST = `${this.DIST_DIR}/prod/${this.APP_SERVER}`;
 
   /**
-   * The folder for client temporary files.
-   * @type {string}
-   */
-  TMP_CLIENT_DIR = `${this.DIST_DIR}/tmp_${this.APP_CLIENT}`;
-
-  /**
-   * The folder for server temporary files.
-   * @type {string}
-   */
-  TMP_SERVER_DIR = `${this.DIST_DIR}/tmp_${this.APP_SERVER}`;
-
-  /**
-   * The folder for the built client files, corresponding to the current environment.
-   * @type {string}
-   */
-  APP_CLIENT_DEST = this.ENV === ENVIRONMENTS.DEVELOPMENT ? this.DEV_CLIENT_DEST : this.PROD_CLIENT_DEST;
-
-  /**
    * The folder for the built server files, corresponding to the current environment.
    * @type {string}
    */
@@ -251,13 +245,13 @@ export class SeedConfig {
    * The folder for the built CSS files.
    * @type {strings}
    */
-  CSS_DEST = `${this.APP_CLIENT_DEST}/css`;
+  CSS_DEST = `${this.APP_DEST}/css`;
 
   /**
    * The folder for the built JavaScript files.
    * @type {string}
    */
-  JS_DEST = `${this.APP_CLIENT_DEST}/js`;
+  JS_DEST = `${this.APP_DEST}/js`;
 
   /**
    * The version of the application as defined in the `package.json`.
@@ -347,7 +341,7 @@ export class SeedConfig {
    * The configuration of SystemJS for the `dev` environment.
    * @type {any}
    */
-  SYSTEM_CONFIG_DEV: any = {
+  protected SYSTEM_CONFIG_DEV: any = {
     defaultJSExtensions: true,
     packageConfigPaths: [
       `/node_modules/*/package.json`,
@@ -364,14 +358,15 @@ export class SeedConfig {
       '@angular/platform-browser': 'node_modules/@angular/platform-browser/bundles/platform-browser.umd.js',
       '@angular/platform-browser-dynamic': 'node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js',
       '@angular/router': 'node_modules/@angular/router/bundles/router.umd.js',
+
       '@angular/common/testing': 'node_modules/@angular/common/bundles/common-testing.umd.js',
       '@angular/compiler/testing': 'node_modules/@angular/compiler/bundles/compiler-testing.umd.js',
       '@angular/core/testing': 'node_modules/@angular/core/bundles/core-testing.umd.js',
       '@angular/http/testing': 'node_modules/@angular/http/bundles/http-testing.umd.js',
       '@angular/platform-browser/testing':
-      'node_modules/@angular/platform-browser/bundles/platform-browser-testing.umd.js',
+        'node_modules/@angular/platform-browser/bundles/platform-browser-testing.umd.js',
       '@angular/platform-browser-dynamic/testing':
-      'node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic-testing.umd.js',
+        'node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic-testing.umd.js',
       '@angular/router/testing': 'node_modules/@angular/router/bundles/router-testing.umd.js',
 
       'rxjs/*': 'node_modules/rxjs/*',
@@ -403,7 +398,7 @@ export class SeedConfig {
       join(this.PROJECT_ROOT, 'node_modules', '@angular', '*', 'package.json')
     ],
     paths: {
-      [`${this.TMP_CLIENT_DIR}/*`]: `${this.TMP_CLIENT_DIR}/*`,
+      [`${this.TMP_DIR}/*`]: `${this.TMP_DIR}/*`,
       '*': 'node_modules/*'
     },
     packages: {
@@ -493,9 +488,10 @@ export class SeedConfig {
       server: {
         baseDir: `${this.DIST_DIR}/empty/`,
         routes: {
-          [`${this.APP_BASE}${this.APP_CLIENT_DEST}`]: this.APP_CLIENT_DEST,
+          [`${this.APP_BASE}${this.APP_SRC}`]: this.APP_SRC,
+          [`${this.APP_BASE}${this.APP_DEST}`]: this.APP_DEST,
           [`${this.APP_BASE}node_modules`]: 'node_modules',
-          [`${this.APP_BASE.replace(/\/$/, '')}`]: this.APP_CLIENT_DEST
+          [`${this.APP_BASE.replace(/\/$/, '')}`]: this.APP_DEST
         }
       }
     },
